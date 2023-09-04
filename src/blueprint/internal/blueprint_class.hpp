@@ -5,22 +5,13 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENTTD_BLUEPRINT_API_HPP
-#define OPENTTD_BLUEPRINT_API_HPP
+#ifndef OPENTTD_BLUEPRINT_TYPE_HPP
+#define OPENTTD_BLUEPRINT_TYPE_HPP
 
-#include <memory>
-#include "tile_type.h"
-#include "internal/blueprint_class.hpp"
-
-/**
- * "Public" functions for blueprints - avoid using anything not in this file from outside
- *  the blueprints folder unless you know what you are doing.
- */
+#include "stdafx.h"
 
 namespace blueprint {
-    std::shared_ptr<Blueprint> Copy(TileIndex start_tile, TileIndex end_tile);
-    void Paste(TileIndex start_tile, const Blueprint *blueprint = nullptr);
-    void Reset();
+    class Blueprint {};
 }
 
-#endif //OPENTTD_BLUEPRINT_API_HPP
+#endif //OPENTTD_BLUEPRINT_TYPE_HPP

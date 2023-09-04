@@ -5,11 +5,16 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENTTD_BLUEPRINT_TYPE_HPP
-#define OPENTTD_BLUEPRINT_TYPE_HPP
+#include "blueprint_state.hpp"
 
 namespace blueprint {
-    class Blueprint {};
+    /**
+     * Get the last blueprint copied by the user.
+     * @return A pointer to the last blueprint, or nullptr if none have been copied since startup.
+     */
+    std::shared_ptr<Blueprint> GetLastBlueprint() {
+        if (_previous_blueprints.empty())
+            return nullptr;
+        return _previous_blueprints.back();
+    }
 }
-
-#endif //OPENTTD_BLUEPRINT_TYPE_HPP

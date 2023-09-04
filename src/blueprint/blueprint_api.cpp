@@ -5,14 +5,17 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "stdafx.h"
 #include "tile_type.h"
-#include "blueprint_class.hpp"
+#include "internal/blueprint_class.hpp"
 
 namespace blueprint {
     /**
      * Copy the area between the start and end tiles and store it as the active blueprint.
      */
-    void Copy(TileIndex start_tile, TileIndex end_tile) {}
+    std::shared_ptr<Blueprint> Copy(TileIndex start_tile, TileIndex end_tile) {
+        return nullptr;
+    }
     /**
      * Paste the active blueprint at the specified start tile.
      * @param start_tile The tile to start pasting in - should correspond to the equivalent start_tile from the copy.
