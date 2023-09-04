@@ -47,6 +47,7 @@
 #include "widgets/rail_widget.h"
 
 #include "safeguards.h"
+#include "blueprint/blueprint_api.hpp"
 
 
 static RailType _cur_railtype;               ///< Rail type of the current build-rail toolbar.
@@ -865,8 +866,7 @@ struct BuildRailToolbarWindow : Window {
 
             case WID_RAT_PASTE:
                 std::cout << "OnPlaceObject->WID_RAT_PASTE" << std::endl;
-                // TODO: Build
-                // TODO: Reset
+                blueprint::Paste(tile);
                 break;
 
 			default: NOT_REACHED();
@@ -944,7 +944,7 @@ struct BuildRailToolbarWindow : Window {
                 case DDSP_BLUEPRINT_COPY:
                     std::cout << "OnPlaceMouseUp->DDSP_BLUEPRINT_COPY" << std::endl;
                     SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_PASTE, this->window_class, this->window_number);
-                    // TODO: CopyArea
+                    blueprint::Copy(start_tile, end_tile);
                     this->last_user_action = WID_RAT_PASTE;
                     break;
 
@@ -971,7 +971,7 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
 
-        //TODO: Reset
+        blueprint::Reset();
 	}
 
 	void OnPlacePresize(Point pt, TileIndex tile) override
