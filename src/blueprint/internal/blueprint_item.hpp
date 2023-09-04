@@ -5,15 +5,13 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENTTD_BLUEPRINT_TYPE_HPP
-#define OPENTTD_BLUEPRINT_TYPE_HPP
-
-#include "stdafx.h"
+#ifndef OPENTTD_BLUEPRINT_ITEM_HPP
+#define OPENTTD_BLUEPRINT_ITEM_HPP
 
 namespace blueprint {
-    class Blueprint {
+    class BlueprintItem {
 
     };
 }
 
-#endif //OPENTTD_BLUEPRINT_TYPE_HPP
+#endif //OPENTTD_BLUEPRINT_ITEM_HPP

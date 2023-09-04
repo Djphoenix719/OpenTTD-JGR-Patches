@@ -1,6 +1,10 @@
 add_files(
     blueprint_class.hpp
     blueprint_class.cpp
+    blueprint_item.hpp
+    blueprint_item.cpp
+    blueprint_position.hpp
+    blueprint_position.cpp
     blueprint_state.hpp
     blueprint_state.cpp
 )
