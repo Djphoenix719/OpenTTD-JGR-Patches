@@ -733,6 +733,18 @@ struct BuildRailToolbarWindow : Window {
 				break;
 			}
 
+            case WID_RAT_COPY:
+                std::cout << "OnClick->WID_RAT_COPY" << std::endl;
+				HandlePlacePushButton(this, WID_RAT_COPY, SPR_CURSOR_QUERY, HT_RECT);
+                this->last_user_action = widget;
+                break;
+
+            case WID_RAT_PASTE:
+                std::cout << "OnClick->WID_RAT_PASTE" << std::endl;
+				HandlePlacePushButton(this, WID_RAT_PASTE, SPR_CURSOR_QUERY, HT_PASTE);
+                this->last_user_action = widget;
+                break;
+
 			default: NOT_REACHED();
 		}
 		this->UpdateRemoveWidgetStatus(widget);
@@ -846,6 +858,17 @@ struct BuildRailToolbarWindow : Window {
 				}
 				break;
 
+            case WID_RAT_COPY:
+                std::cout << "OnPlaceObject->WID_RAT_COPY" << std::endl;
+                VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_BLUEPRINT_COPY);
+                break;
+
+            case WID_RAT_PASTE:
+                std::cout << "OnPlaceObject->WID_RAT_PASTE" << std::endl;
+                // TODO: Build
+                // TODO: Reset
+                break;
+
 			default: NOT_REACHED();
 		}
 	}
@@ -917,6 +940,17 @@ struct BuildRailToolbarWindow : Window {
 						}
 					}
 					break;
+
+                case DDSP_BLUEPRINT_COPY:
+                    std::cout << "OnPlaceMouseUp->DDSP_BLUEPRINT_COPY" << std::endl;
+                    SetObjectToPlace(SPR_CURSOR_QUERY, PAL_NONE, HT_PASTE, this->window_class, this->window_number);
+                    // TODO: CopyArea
+                    this->last_user_action = WID_RAT_PASTE;
+                    break;
+
+                case DDSP_BLUEPRINT_PASTE:
+                    std::cout << "OnPlaceMouseUp->DDSP_BLUEPRINT_PASTE" << std::endl;
+                    break;
 			}
 		}
 	}
@@ -936,6 +970,8 @@ struct BuildRailToolbarWindow : Window {
 		DeleteWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
 		DeleteWindowById(WC_SELECT_STATION, 0);
 		DeleteWindowByClass(WC_BUILD_BRIDGE);
+
+        //TODO: Reset
 	}
 
 	void OnPlacePresize(Point pt, TileIndex tile) override
@@ -1039,6 +1075,8 @@ static const NWidgetPart _nested_build_rail_widgets[] = {
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_REMOVE, STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR),
 		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_CONVERT_RAIL),
 						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_CONVERT_RAIL, 0),
+		NWidget(WWT_IMGBTN, COLOUR_DARK_GREEN, WID_RAT_COPY),
+						SetFill(0, 1), SetMinimalSize(22, 22), SetDataTip(SPR_IMG_SAVE, 0),
 	EndContainer(),
 };
 

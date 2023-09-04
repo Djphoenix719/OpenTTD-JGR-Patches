@@ -30,6 +30,8 @@ enum RailToolbarWidgets {
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
 	WID_RAT_CONVERT_RAIL_TRACK, ///< Convert other rail to this type (track).
+	WID_RAT_COPY,           ///< Blueprint copy
+	WID_RAT_PASTE,          ///< Blueprint paste
 };
 
 /** Widgets of the #BuildRailStationWindow class. */

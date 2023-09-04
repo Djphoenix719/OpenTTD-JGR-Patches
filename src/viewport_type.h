@@ -199,6 +199,10 @@ enum ViewportDragDropSelectionProcess {
 	DDSP_REMOVE_BUSSTOP,       ///< Road stop removal (buses)
 	DDSP_REMOVE_TRUCKSTOP,     ///< Road stop removal (trucks)
 	DDSP_CONVERT_ROAD,         ///< Road conversion
+
+    /* Blueprint specific actions */
+    DDSP_BLUEPRINT_COPY,       ///< Copy blueprint
+    DDSP_BLUEPRINT_PASTE       ///< Paste blueprint (fake widget)
 };
 
 
