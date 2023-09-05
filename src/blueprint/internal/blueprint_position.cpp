@@ -12,21 +12,21 @@ namespace blueprint {
     /**
      * Convert a TileIndexDiffC to a position.
      */
-    inline Position DiffToPosition(TileIndexDiffC diff) {
+    Position DiffToPosition(TileIndexDiffC diff) {
         return Position{(int) diff.x, (int) diff.y};
     }
 
     /**
      * Convert a Position to a TileIndexDiffC.
      */
-    inline TileIndexDiffC PositionToDiff(Position position) {
+    TileIndexDiffC PositionToDiff(Position position) {
         return TileIndexDiffC{(int16) position.x, (int16) position.y};
     }
 
     /**
      * Convert a TileIndex to a Position.
      */
-    inline Position IndexToPosition(TileIndex index) {
+    Position IndexToPosition(TileIndex index) {
         uint x = TileX(index);
         uint y = TileY(index);
         return Position{(int) x, (int) y};
@@ -35,7 +35,7 @@ namespace blueprint {
     /**
      * Convert a Position to a TileIndex.
      */
-    inline TileIndex PositionToIndex(Position position) {
+    TileIndex PositionToIndex(Position position) {
         return TileXY((uint) position.x, (uint) position.y);
     }
 }
