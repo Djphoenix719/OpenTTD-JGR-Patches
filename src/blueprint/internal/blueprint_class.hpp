@@ -8,11 +8,60 @@
 #ifndef OPENTTD_BLUEPRINT_TYPE_HPP
 #define OPENTTD_BLUEPRINT_TYPE_HPP
 
+#include <vector>
+#include <memory>
+#include <unordered_map>
 #include "stdafx.h"
+#include "blueprint_position.hpp"
+#include "blueprint_item.hpp"
 
 namespace blueprint {
     class Blueprint {
+    public:
+        Blueprint(TileIndex start, TileIndex end) {
+            this->start_position = IndexToPosition(start);
+            this->end_position = IndexToPosition(end);
+        }
 
+        /**
+         * Get the start position of this blueprint.
+         */
+        [[nodiscard]] inline Position GetStartPosition() const noexcept { return this->start_position; }
+
+        /**
+         * Get the end position of this blueprint.
+         */
+        [[nodiscard]] inline Position GetEndPosition() const noexcept { return this->end_position; }
+
+        /**
+         * Returns true if the blueprint has a local tile (e.g. just an offset).
+         */
+        bool HasLocalTile(Position position);
+
+        /**
+         * Add an item to this blueprint.
+         */
+        void Add(std::shared_ptr<BlueprintItemBase> &item);
+
+    private:
+        /**
+         * Start position of this blueprint (world position).
+         */
+        Position start_position;
+        /**
+         * End position of this blueprint (world position).
+         */
+        Position end_position;
+
+        /**
+         * Vector of items (e.g. individual tracks, signals, etc) contained within this blueprint.
+         */
+        std::vector<std::shared_ptr<BlueprintItemBase>> items;
+
+        /**
+         * Unordered multi-map of offsets to items which should be rendered at that offset.
+         */
+        std::unordered_multimap<Position, std::shared_ptr<BlueprintItemBase>> tiles;
     };
 }
 

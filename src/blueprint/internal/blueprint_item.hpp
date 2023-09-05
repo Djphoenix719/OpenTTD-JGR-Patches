@@ -8,9 +8,46 @@
 #ifndef OPENTTD_BLUEPRINT_ITEM_HPP
 #define OPENTTD_BLUEPRINT_ITEM_HPP
 
-namespace blueprint {
-    class BlueprintItem {
+#include "stdafx.h"
+#include "command_type.h"
+#include "rail_type.h"
+#include "track_type.h"
+#include "blueprint_position.hpp"
 
+namespace blueprint {
+    class BlueprintItemBase {
+    public:
+        /**
+         * Get the position of the origin of this blueprint item (e.g. where it was copied from).
+         */
+        [[nodiscard]] inline Position GetOriginPosition() const noexcept { return this->origin; }
+
+        /**
+         * Get the offset from the parent blueprint's start_position.
+         */
+        [[nodiscard]] inline Position GetStartOffset() const noexcept { return this->offset; }
+
+        /**
+         * Make a command that will send this single item over the network.
+         * @param tile_index Origin point for the command, not including offset. E.g. this is where the
+         *  user clicked, not necessarily where this item should be placed.
+         */
+        virtual std::unique_ptr<CommandContainer> MakeCommand(TileIndex tile_index) = 0;
+
+    protected:
+        /**
+         * Tile index of the origin of this blueprint item (e.g. where it was copied from).
+         */
+        Position origin;
+        /**
+         * Offset from the parent blueprint's start_position.
+         */
+        Position offset;
+
+        explicit BlueprintItemBase(TileIndex start_index, Position offset) {
+            this->offset = offset;
+            this->origin = IndexToPosition(start_index) + offset;
+        }
     };
 }
 

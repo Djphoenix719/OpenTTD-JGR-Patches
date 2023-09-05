@@ -5,6 +5,17 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace blueprint {
+#include "blueprint_class.hpp"
+#include "blueprint_item.hpp"
 
+namespace blueprint {
+    bool Blueprint::HasLocalTile(blueprint::Position position) {
+        auto range = this->tiles.equal_range(position);
+        return range.first != this->tiles.end();
+    }
+
+    void Blueprint::Add(std::shared_ptr<BlueprintItemBase> &item) {
+        this->items.emplace_back(item);
+        this->tiles.emplace(std::make_pair(item->GetStartOffset(), item));
+    }
 }

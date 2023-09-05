@@ -1,3 +1,4 @@
+add_subdirectory(item)
 add_files(
     blueprint_class.hpp
     blueprint_class.cpp
