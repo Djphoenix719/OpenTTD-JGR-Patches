@@ -14,6 +14,10 @@
 #include "settings_type.h"
 #include "blueprint/internal/blueprint_position.hpp"
 #include "blueprint_item_track.hpp"
+#include "rail_map.h"
+#include "table/sprites.h"
+#include "viewport_func.h"
+#include "rail.h"
 
 namespace blueprint {
     std::unique_ptr<CommandContainer> BlueprintItemTrack::MakeCommand(TileIndex tile_index) {
@@ -25,5 +29,41 @@ namespace blueprint {
             (uint32) (CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK)), // cmd
             nullptr // callback
         ));
+    }
+
+    void BlueprintItemTrack::Draw(const TileInfo *tile_info) {
+        auto rti = GetRailTypeInfo(GetRailType(PositionToIndex(this->origin)));
+
+        SpriteID sprite_id;
+        switch (this->direction) {
+            case TRACKDIR_UPPER_W:
+            case TRACKDIR_UPPER_E:
+                sprite_id = rti->base_sprites.single_n;
+                break;
+            case TRACKDIR_RIGHT_S:
+            case TRACKDIR_RIGHT_N:
+                sprite_id = rti->base_sprites.single_e;
+                break;
+            case TRACKDIR_LOWER_E:
+            case TRACKDIR_LOWER_W:
+                sprite_id = rti->base_sprites.single_s;
+                break;
+            case TRACKDIR_LEFT_S:
+            case TRACKDIR_LEFT_N:
+                sprite_id = rti->base_sprites.single_w;
+                break;
+            case TRACKDIR_Y_SE:
+            case TRACKDIR_Y_NW:
+                sprite_id = rti->base_sprites.single_y;
+                break;
+            case TRACKDIR_X_SW:
+            case TRACKDIR_X_NE:
+                sprite_id = rti->base_sprites.single_x;
+                break;
+            default:
+                NOT_REACHED();
+        }
+
+        DrawGroundSpriteAt(sprite_id, PAL_NONE, 0, 0, 0);
     }
 }

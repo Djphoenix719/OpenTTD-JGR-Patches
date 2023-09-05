@@ -11,6 +11,8 @@
 #include <memory>
 #include "tile_type.h"
 #include "internal/blueprint_class.hpp"
+#include "tile_cmd.h"
+#include "tilehighlight_type.h"
 
 /**
  * "Public" functions for blueprints - avoid using anything not in this file from outside
@@ -21,6 +23,7 @@ namespace blueprint {
     std::shared_ptr<Blueprint> Copy(TileIndex start_tile, TileIndex end_tile);
     void Paste(TileIndex start_tile, const Blueprint *blueprint = nullptr);
     void Reset();
+    bool DrawTileSelection(const TileInfo *tile_info, const TileHighlightData &tile_highlight_data);
 }
 
 #endif //OPENTTD_BLUEPRINT_API_HPP

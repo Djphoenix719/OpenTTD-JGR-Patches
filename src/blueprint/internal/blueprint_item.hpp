@@ -13,6 +13,7 @@
 #include "rail_type.h"
 #include "track_type.h"
 #include "blueprint_position.hpp"
+#include "tile_cmd.h"
 
 namespace blueprint {
     class BlueprintItemBase {
@@ -33,6 +34,8 @@ namespace blueprint {
          *  user clicked, not necessarily where this item should be placed.
          */
         virtual std::unique_ptr<CommandContainer> MakeCommand(TileIndex tile_index) = 0;
+
+        virtual void Draw(const TileInfo *tile_info) = 0;
 
     protected:
         /**

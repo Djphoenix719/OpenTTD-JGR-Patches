@@ -13,6 +13,7 @@ namespace blueprint {
     class BlueprintItemTrack : public BlueprintItemBase {
     public:
         std::unique_ptr<CommandContainer> MakeCommand(TileIndex tile_index) override;
+        void Draw(const TileInfo *tile_info) override;
 
         explicit BlueprintItemTrack(TileIndex start_index, Position offset, RailType type, Trackdir direction)
             : BlueprintItemBase(start_index, offset) {

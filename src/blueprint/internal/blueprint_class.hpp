@@ -14,6 +14,7 @@
 #include "stdafx.h"
 #include "blueprint_position.hpp"
 #include "blueprint_item.hpp"
+#include "tile_cmd.h"
 
 namespace blueprint {
     class Blueprint {
@@ -34,14 +35,13 @@ namespace blueprint {
         [[nodiscard]] inline Position GetEndPosition() const noexcept { return this->end_position; }
 
         /**
-         * Returns true if the blueprint has a local tile (e.g. just an offset).
-         */
-        bool HasLocalTile(Position position);
-
-        /**
          * Add an item to this blueprint.
          */
-        void Add(std::shared_ptr<BlueprintItemBase> &item);
+        void Add(std::shared_ptr<BlueprintItemBase> item);
+
+        void Load();
+
+        void Draw(const TileInfo *tile_info);
 
     private:
         /**

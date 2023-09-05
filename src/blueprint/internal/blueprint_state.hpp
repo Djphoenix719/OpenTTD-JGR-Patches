@@ -15,8 +15,8 @@
 #include "blueprint_class.hpp"
 
 namespace blueprint {
-    std::vector<std::shared_ptr<Blueprint>> _previous_blueprints;
     std::shared_ptr<Blueprint> GetLastBlueprint();
+    void AddBlueprintToHistory(std::shared_ptr<Blueprint> blueprint);
 }
 
 #endif //OPENTTD_BLUEPRINT_STATE_HPP

@@ -115,6 +115,7 @@
 #include "worker_thread.h"
 #include "vehiclelist.h"
 #include "core/backup_type.hpp"
+#include "blueprint/blueprint_api.hpp"
 
 #include <map>
 #include <vector>
@@ -1591,6 +1592,9 @@ static void DrawTileSelection(const TileInfo *ti)
 
 	TileHighlightType tht = GetTileHighlightType(ti->tile);
 	DrawTileHighlightType(ti, tht);
+
+    if (blueprint::DrawTileSelection(ti, _thd))
+        return;
 
 	switch (_thd.drawstyle & HT_DRAG_MASK) {
 		default: break; // No tile selection active?
