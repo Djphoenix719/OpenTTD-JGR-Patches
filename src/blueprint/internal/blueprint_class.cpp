@@ -81,7 +81,7 @@ namespace blueprint {
         return items;
     }
 
-    void Blueprint::Add(std::shared_ptr<BlueprintItemBase> item) {
+    void Blueprint::Add(const std::shared_ptr<BlueprintItemBase> &item) {
         this->items.emplace_back(item);
         this->tiles.emplace(std::make_pair(item->GetStartOffset(), item));
     }

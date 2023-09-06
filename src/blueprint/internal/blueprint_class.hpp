@@ -37,7 +37,7 @@ namespace blueprint {
         /**
          * Add an item to this blueprint.
          */
-        void Add(std::shared_ptr<BlueprintItemBase> item);
+        void Add(const std::shared_ptr<BlueprintItemBase> &item);
 
         void Load();
 
