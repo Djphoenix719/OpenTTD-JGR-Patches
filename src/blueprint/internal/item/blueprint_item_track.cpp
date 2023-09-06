@@ -18,6 +18,9 @@
 #include "table/sprites.h"
 #include "viewport_func.h"
 #include "rail.h"
+#include "tilehighlight_type.h"
+#include "table/autorail.h"
+#include "spritecache.h"
 
 namespace blueprint {
     std::unique_ptr<CommandContainer> BlueprintItemTrack::MakeCommand(TileIndex tile_index) {
@@ -65,5 +68,18 @@ namespace blueprint {
         }
 
         DrawGroundSpriteAt(sprite_id, PAL_NONE, 0, 0, 0);
+    }
+
+    void BlueprintItemTrack::MarkDirty(TileIndex next_origin) {
+        this->ghost = std::make_unique<BlueprintGhost>();
+        auto real_position = IndexToPosition(next_origin) + this->offset;
+        auto real_index = PositionToIndex(real_position);
+        this->ghost->position = RemapCoords(
+            real_position.x * (int) TILE_SIZE,
+            real_position.y * (int) TILE_SIZE,
+            (int) TileHeight(real_index) * 7
+        );
+        this->ghost->sprite_id = SPR_AUTORAIL_BASE + _AutorailTilehSprite[0][TrackdirToDirection(this->direction)];
+        this->ghost->palette_id = PAL_NONE;
     }
 }

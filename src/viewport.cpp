@@ -3775,6 +3775,8 @@ void ViewportDoDraw(Viewport *vp, int left, int top, int right, int bottom, uint
 			PrepareDrawSpriteViewportSpriteStore(_vdd->sprite_data, cs.image, cs.pal);
 		}
 
+        blueprint::DrawSelectionOverlay(_vdd->sprite_data, &_vdd->dpi);
+
 		_viewport_drawer_jobs++;
 		if (unlikely(HasBit(_viewport_debug_flags, VDF_DISABLE_THREAD))) {
 			ViewportDoDrawRenderJob(vp, _vdd.release());
@@ -5266,6 +5268,7 @@ void UpdateTileSelection()
 	}
 
 	if (new_drawstyle & HT_LINE) CalcNewPolylineOutersize();
+    blueprint::UpdateTileSelection(_thd);
 
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||

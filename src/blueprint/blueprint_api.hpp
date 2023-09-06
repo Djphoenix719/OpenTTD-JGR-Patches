@@ -24,6 +24,8 @@ namespace blueprint {
     void Paste(TileIndex start_tile, const Blueprint *blueprint = nullptr);
     void Reset();
     bool DrawTileSelection(const TileInfo *tile_info, const TileHighlightData &tile_highlight_data);
+    void UpdateTileSelection(TileHighlightData &tile_highlight_data);
+    void DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi);
 }
 
 #endif //OPENTTD_BLUEPRINT_API_HPP

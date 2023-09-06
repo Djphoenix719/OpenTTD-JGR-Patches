@@ -16,6 +16,12 @@
 #include "tile_cmd.h"
 
 namespace blueprint {
+    struct BlueprintGhost {
+        Point position;
+        SpriteID sprite_id;
+        SpriteID palette_id;
+    };
+
     class BlueprintItemBase {
     public:
         /**
@@ -29,13 +35,28 @@ namespace blueprint {
         [[nodiscard]] inline Position GetStartOffset() const noexcept { return this->offset; }
 
         /**
+         * Get a pointer to the ghost data contained within this blueprint item. Do not free this pointer,
+         *  it is managed by the blueprint item.
+         */
+        [[nodiscard]] inline BlueprintGhost *GetGhost() const noexcept { return this->ghost.get(); }
+
+        /**
          * Make a command that will send this single item over the network.
          * @param tile_index Origin point for the command, not including offset. E.g. this is where the
          *  user clicked, not necessarily where this item should be placed.
          */
         virtual std::unique_ptr<CommandContainer> MakeCommand(TileIndex tile_index) = 0;
 
+        /**
+         * Draw this item at the given tile.
+         * @param tile_info The tile to draw at.
+         */
         virtual void Draw(const TileInfo *tile_info) = 0;
+
+        /**
+         * Mark the item dirty, recalculating it's sprite immediately.
+         */
+        virtual void MarkDirty(TileIndex current_origin) = 0;
 
     protected:
         /**
@@ -46,6 +67,10 @@ namespace blueprint {
          * Offset from the parent blueprint's start_position.
          */
         Position offset;
+        /**
+         * Data required to render this blueprint item's ghost when placing the blueprint.
+         */
+        std::unique_ptr<BlueprintGhost> ghost;
 
         explicit BlueprintItemBase(TileIndex start_index, Position offset) {
             this->offset = offset;

@@ -12,6 +12,7 @@
 #include "tile_cmd.h"
 #include "tilehighlight_type.h"
 #include "blueprint/internal/blueprint_state.hpp"
+#include "viewport_func.h"
 
 namespace blueprint {
     /**
@@ -50,5 +51,27 @@ namespace blueprint {
 
         blueprint->Draw(tile_info);
         return true;
+    }
+
+    void UpdateTileSelection(TileHighlightData &tile_highlight_data) {
+        if (tile_highlight_data.place_mode == HT_PASTE) {
+            auto cursor_virtual = GetTileBelowCursor();
+            if (cursor_virtual.x == -1 || cursor_virtual.y == -1)
+                return;
+            auto cursor_world = TileVirtXY(cursor_virtual.x, cursor_virtual.y);
+
+            auto blueprint = GetLastBlueprint();
+            if (blueprint == nullptr)
+                return;
+
+            blueprint->MarkDirty(cursor_world);
+        }
+    }
+
+    void DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi) {
+        auto blueprint = GetLastBlueprint();
+        if (blueprint == nullptr)
+            return;
+        blueprint->DrawSelectionOverlay(sprite_store, dpi);
     }
 }
