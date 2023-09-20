@@ -21,21 +21,17 @@
 namespace blueprint {
     class Blueprint {
     public:
+        Blueprint() {
+            this->start_position = {};
+            this->end_position = {};
+            this->last_rendered_tile = -1;
+        }
+
         Blueprint(TileIndex start, TileIndex end) {
             this->start_position = IndexToPosition(start);
             this->end_position = IndexToPosition(end);
             this->last_rendered_tile = -1;
         }
-
-        /**
-         * Get the start position of this blueprint.
-         */
-        [[nodiscard]] inline Position GetStartPosition() const noexcept { return this->start_position; }
-
-        /**
-         * Get the end position of this blueprint.
-         */
-        [[nodiscard]] inline Position GetEndPosition() const noexcept { return this->end_position; }
 
         /**
          * Add an item to this blueprint.
@@ -49,18 +45,17 @@ namespace blueprint {
         void Load();
 
         /**
+         * Paste this blueprint at the start tile.
+         * @param start_tile
+         */
+        void Paste(TileIndex start_tile);
+
+        /**
          * If the blueprint were to be positioned at the mouse cursor and has at least one item at
          *  the tile, render the items on the tile.
          * @param tile_info The location where rendering is occurring.
          */
         void Draw(const TileInfo *tile_info);
-
-        /**
-         * Mark all items in the blueprint dirty, recalculating their sprites.
-         */
-        void MarkDirty(TileIndex next_origin);
-
-        void DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi);
 
     private:
         /**

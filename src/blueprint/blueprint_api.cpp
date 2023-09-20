@@ -21,7 +21,7 @@ namespace blueprint {
     std::shared_ptr<Blueprint> Copy(TileIndex start_tile, TileIndex end_tile) {
         auto blueprint = std::make_shared<Blueprint>(start_tile, end_tile);
         blueprint->Load();
-        AddBlueprintToHistory(blueprint);
+        SetActiveBlueprint(blueprint);
         return blueprint;
     }
 
@@ -30,12 +30,25 @@ namespace blueprint {
      * @param start_tile The tile to start pasting in - should correspond to the equivalent start_tile from the copy.
      * @param blueprint The blueprint to paste - if nullptr use the globally available "last copied blueprint".
      */
-    void Paste(TileIndex start_tile, const Blueprint *blueprint) {}
+    void Paste(TileIndex start_tile) {
+        auto blueprint = GetActiveBlueprint();
+        if (blueprint == nullptr)
+            return;
+
+        blueprint->Paste(start_tile);
+    }
 
     /**
-     * Reset the last copied blueprint.
+     * Reset the current blueprint to a new blueprint.
      */
-    void Reset() {}
+    void Reset() {
+        auto last_blueprint = GetActiveBlueprint();
+        if (last_blueprint == nullptr)
+            return;
+
+        auto next_blueprint = std::make_shared<Blueprint>();
+        SetActiveBlueprint(next_blueprint);
+    }
 
     bool DrawTileSelection(const TileInfo *tile_info, const TileHighlightData &tile_highlight_data) {
         if (tile_highlight_data.place_mode != HT_PASTE) {
@@ -43,9 +56,9 @@ namespace blueprint {
             return false;
         }
 
-        auto blueprint = GetLastBlueprint();
+        auto blueprint = GetActiveBlueprint();
         if (blueprint == nullptr) {
-            // If we are pasting a blueprint, this should never be nullptr, but for safety if it is do nothing
+            // If we are pasting a blueprint, this should never be nullptr, but for safety if it is, do nothing
             return false;
         }
 
@@ -53,25 +66,27 @@ namespace blueprint {
         return true;
     }
 
-    void UpdateTileSelection(TileHighlightData &tile_highlight_data) {
-        if (tile_highlight_data.place_mode == HT_PASTE) {
-            auto cursor_virtual = GetTileBelowCursor();
-            if (cursor_virtual.x == -1 || cursor_virtual.y == -1)
+    void UpdateTileSelection(TileHighlightData &tile_highlight_data, HighLightStyle new_draw_style) {
+        // If old or new draw style is pasting
+        if (tile_highlight_data.drawstyle & HT_PASTE || new_draw_style & HT_PASTE) {
+            // If the new style is not pasting, we're "stopping paste"
+            if (!(new_draw_style & HT_PASTE)) {
+                Reset();
+                MarkWholeNonMapViewportsDirty();
                 return;
-            auto cursor_world = TileVirtXY(cursor_virtual.x, cursor_virtual.y);
+            }
 
-            auto blueprint = GetLastBlueprint();
-            if (blueprint == nullptr)
-                return;
+            if (tile_highlight_data.place_mode & HT_PASTE) {
+                auto cursor_virtual = GetTileBelowCursor();
+                if (cursor_virtual.x == -1 || cursor_virtual.y == -1)
+                    return;
 
-            blueprint->MarkDirty(cursor_world);
+                auto blueprint = GetActiveBlueprint();
+                if (blueprint == nullptr)
+                    return;
+
+                MarkWholeNonMapViewportsDirty();
+            }
         }
-    }
-
-    void DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi) {
-        auto blueprint = GetLastBlueprint();
-        if (blueprint == nullptr)
-            return;
-        blueprint->DrawSelectionOverlay(sprite_store, dpi);
     }
 }

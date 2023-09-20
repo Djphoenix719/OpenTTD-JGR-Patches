@@ -5266,7 +5266,7 @@ void UpdateTileSelection()
 	}
 
 	if (new_drawstyle & HT_LINE) CalcNewPolylineOutersize();
-    blueprint::UpdateTileSelection(_thd);
+    blueprint::UpdateTileSelection(_thd, new_drawstyle);
 
 	/* redraw selection */
 	if (_thd.drawstyle != new_drawstyle ||

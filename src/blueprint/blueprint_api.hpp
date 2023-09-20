@@ -21,11 +21,10 @@
 
 namespace blueprint {
     std::shared_ptr<Blueprint> Copy(TileIndex start_tile, TileIndex end_tile);
-    void Paste(TileIndex start_tile, const Blueprint *blueprint = nullptr);
+    void Paste(TileIndex start_tile);
     void Reset();
     bool DrawTileSelection(const TileInfo *tile_info, const TileHighlightData &tile_highlight_data);
-    void UpdateTileSelection(TileHighlightData &tile_highlight_data);
-    void DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi);
+    void UpdateTileSelection(TileHighlightData &tile_highlight_data, HighLightStyle new_draw_style);
 }
 
 #endif //OPENTTD_BLUEPRINT_API_HPP

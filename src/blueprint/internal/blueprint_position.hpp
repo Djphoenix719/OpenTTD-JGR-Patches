@@ -34,11 +34,15 @@ namespace blueprint {
 
         inline bool operator==(const Position &rhs) const noexcept {
             return this->x == rhs.x && this->y == rhs.y;
-        };
+        }
 
         inline bool operator!=(const Position &rhs) const noexcept {
             return this->x != rhs.x || this->y != rhs.y;
-        };
+        }
+
+        inline Position operator-() const noexcept {
+            return Position{-this->x, -this->y};
+        }
 
         /**
          * Returns a new Position which points from this to the other Position (like a Vector does).

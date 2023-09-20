@@ -8,22 +8,20 @@
 #include "blueprint_state.hpp"
 
 namespace blueprint {
-    std::vector<std::shared_ptr<Blueprint>> _previous_blueprints;
+    std::shared_ptr<Blueprint> _current;
 
     /**
      * Get the last blueprint copied by the user.
      * @return A pointer to the last blueprint, or nullptr if none have been copied since startup.
      */
-    std::shared_ptr<Blueprint> GetLastBlueprint() {
-        if (_previous_blueprints.empty())
-            return nullptr;
-        return _previous_blueprints.back();
+    std::shared_ptr<Blueprint> GetActiveBlueprint() {
+        return _current;
     }
 
     /**
-     * Add a blueprint to the history.
+     * Set the currently active blueprint to the provided blueprint;
      */
-    void AddBlueprintToHistory(std::shared_ptr<Blueprint> blueprint) {
-        _previous_blueprints.emplace_back(blueprint);
+    void SetActiveBlueprint(const std::shared_ptr<Blueprint> &blueprint) {
+        _current = blueprint;
     }
 }

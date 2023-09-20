@@ -14,6 +14,7 @@
 #include "gfx_type.h"
 #include "zoom_func.h"
 #include "table/sprites.h"
+#include "command_func.h"
 #include <algorithm>
 
 namespace blueprint {
@@ -91,6 +92,8 @@ namespace blueprint {
     }
 
     void Blueprint::Load() {
+        this->tiles.clear();
+
         auto area = TileArea{
             PositionToIndex(this->start_position),
             PositionToIndex(this->end_position)
@@ -124,47 +127,10 @@ namespace blueprint {
         }
     }
 
-    void Blueprint::MarkDirty(TileIndex next_origin) {
-        if (this->last_rendered_tile == -1) {
-            this->last_rendered_tile = next_origin;
-        }
-
-        Position current_position = IndexToPosition(this->last_rendered_tile);
-
-        // Mark all tiles that are occupied by this blueprint as dirty
+    void Blueprint::Paste(TileIndex start_tile) {
         for (auto &item: this->items) {
-            auto index = PositionToIndex(current_position + item->GetStartOffset());
-            MarkTileDirtyByTile(index);
-        }
-
-        // Next mark viewports which rendered our sprites dirty
-        for (auto &item: this->items) {
-            auto ghost = item->GetGhost();
-            if (ghost != nullptr) {
-                auto sprite = GetSprite(GB(ghost->sprite_id, 0, SPRITE_WIDTH), SpriteType::Normal);
-                auto left = ghost->position.x + sprite->x_offs;
-                auto top = ghost->position.y + sprite->y_offs;
-                MarkAllViewportsDirty(
-                    left,
-                    top,
-                    left + UnScaleByZoom(sprite->width, ZOOM_LVL_NORMAL),
-                    top + UnScaleByZoom(sprite->height, ZOOM_LVL_NORMAL)
-                );
-            }
-            item->MarkDirty(next_origin);
-        }
-
-        this->last_rendered_tile = next_origin;
-    }
-
-    void Blueprint::DrawSelectionOverlay(const SpritePointerHolder &sprite_store, const DrawPixelInfo *dpi) {
-        for (auto &item: this->items) {
-            auto ghost = item->GetGhost();
-            if (ghost == nullptr)
-                continue;
-
-            DrawSpriteViewport(sprite_store, dpi, ghost->sprite_id, ghost->palette_id, ghost->position.x,
-                               ghost->position.y);
+            auto command = item->MakeCommand(start_tile);
+            DoCommand(command.get(), DC_EXEC);
         }
     }
 }

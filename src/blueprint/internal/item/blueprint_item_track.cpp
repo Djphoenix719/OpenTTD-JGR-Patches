@@ -26,7 +26,7 @@ namespace blueprint {
     std::unique_ptr<CommandContainer> BlueprintItemTrack::MakeCommand(TileIndex tile_index) {
         auto track = TrackdirToTrack(this->direction);
         return std::make_unique<CommandContainer>(NewCommandContainerBasic(
-            AddTileIndexDiffCWrap(tile_index, PositionToDiff(this->offset)), // tile
+            AddTileIndexDiffCWrap(tile_index, PositionToDiff(-this->offset)), // tile
             this->type, // p1
             track | (_settings_client.gui.auto_remove_signals << 3), // p2
             (uint32) (CMD_BUILD_SINGLE_RAIL | CMD_MSG(STR_ERROR_CAN_T_BUILD_RAILROAD_TRACK)), // cmd
