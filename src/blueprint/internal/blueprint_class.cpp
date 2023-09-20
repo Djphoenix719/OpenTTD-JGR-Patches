@@ -16,6 +16,7 @@
 #include "table/sprites.h"
 #include "command_func.h"
 #include "blueprint/internal/item/blueprint_item_signal.hpp"
+#include "blueprint/internal/item/blueprint_item_bridge.hpp"
 #include <algorithm>
 
 namespace blueprint {
@@ -103,7 +104,7 @@ namespace blueprint {
                         // When there are multiple tracks on the same tile we need to decompress the bits
                         for (Track track = TRACK_BEGIN; track < TRACK_END; track++) {
                             if (HasBit(GetTrackBits(tile_index), track)) {
-                                auto bp = std::make_unique<BlueprintItemTrack>(
+                                auto item = std::make_unique<BlueprintItemTrack>(
                                     BlueprintItemTrack(
                                         tile_index,
                                         offset,
@@ -111,7 +112,7 @@ namespace blueprint {
                                         _track_iterate_dir[track]
                                     )
                                 );
-                                items.emplace_back(std::move(bp));
+                                items.emplace_back(std::move(item));
                             }
                         }
                         break;
@@ -120,11 +121,36 @@ namespace blueprint {
                         NOT_REACHED();
                 }
                 break;
-//            case MP_TUNNELBRIDGE:
-//                if (GetTunnelBridgeTransportType(tile_index) != TRANSPORT_RAIL)
-//                    break;
-//                blueprint->AddTunnelBridge(tile_index, tile_diff);
-//                break;
+            case MP_TUNNELBRIDGE: {
+                if (GetTunnelBridgeTransportType(tile_index) != TRANSPORT_RAIL)
+                    break;
+
+                auto other_end = GetOtherTunnelBridgeEnd(tile_index);
+
+                if (IsTunnel(tile_index)) {
+//                    auto item = std::make_shared<BlueprintTunnelItem>(
+//                        BlueprintTunnelItem(
+//                            tile_index,
+//                            tile_diff,
+//                            TileIndexToTileIndexDiffC(other_end, tile_index),
+//                            GetRailType(tile_index),
+//                            GetTunnelBridgeDirection(tile_index)
+//                        )
+//                    );
+//                    this->AddItem(tile_diff, item);
+                } else {
+                    auto item = std::make_unique<BlueprintBridgeItem>(
+                        BlueprintBridgeItem(
+                            tile_index,
+                            offset,
+                            TileIndexToTileIndexDiffC(other_end, tile_index),
+                            GetBridgeType(tile_index)
+                        )
+                    );
+                    items.emplace_back(std::move(item));
+                }
+                break;
+            }
 
                 // Nothing else gets copied, do nothing
             default:
