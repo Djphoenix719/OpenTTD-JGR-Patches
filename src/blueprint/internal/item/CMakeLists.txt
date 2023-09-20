@@ -1,8 +1,10 @@
 add_files(
-    blueprint_item_track.hpp
-    blueprint_item_track.cpp
-    blueprint_item_signal.hpp
-    blueprint_item_signal.cpp
     blueprint_item_bridge.hpp
     blueprint_item_bridge.cpp
+    blueprint_item_signal.hpp
+    blueprint_item_signal.cpp
+    blueprint_item_track.hpp
+    blueprint_item_track.cpp
+    blueprint_item_tunnel.hpp
+    blueprint_item_tunnel.cpp
 )

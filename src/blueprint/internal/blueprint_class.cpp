@@ -17,6 +17,7 @@
 #include "command_func.h"
 #include "blueprint/internal/item/blueprint_item_signal.hpp"
 #include "blueprint/internal/item/blueprint_item_bridge.hpp"
+#include "blueprint/internal/item/blueprint_item_tunnel.hpp"
 #include <algorithm>
 
 namespace blueprint {
@@ -128,16 +129,16 @@ namespace blueprint {
                 auto other_end = GetOtherTunnelBridgeEnd(tile_index);
 
                 if (IsTunnel(tile_index)) {
-//                    auto item = std::make_shared<BlueprintTunnelItem>(
-//                        BlueprintTunnelItem(
-//                            tile_index,
-//                            tile_diff,
-//                            TileIndexToTileIndexDiffC(other_end, tile_index),
-//                            GetRailType(tile_index),
-//                            GetTunnelBridgeDirection(tile_index)
-//                        )
-//                    );
-//                    this->AddItem(tile_diff, item);
+                    auto item = std::make_unique<BlueprintTunnelItem>(
+                        BlueprintTunnelItem(
+                            tile_index,
+                            offset,
+                            TileIndexToTileIndexDiffC(other_end, tile_index),
+                            GetRailType(tile_index),
+                            GetTunnelBridgeDirection(tile_index)
+                        )
+                    );
+                    items.emplace_back(std::move(item));
                 } else {
                     auto item = std::make_unique<BlueprintBridgeItem>(
                         BlueprintBridgeItem(
