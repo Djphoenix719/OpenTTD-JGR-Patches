@@ -15,6 +15,7 @@
 #include "zoom_func.h"
 #include "table/sprites.h"
 #include "command_func.h"
+#include "blueprint/internal/item/blueprint_item_signal.hpp"
 #include <algorithm>
 
 namespace blueprint {
@@ -38,10 +39,56 @@ namespace blueprint {
 //                        blueprint->AddRailDepot(tile_index, tile_diff);
 //                        break;
 //                    }
-//                    case RAIL_TILE_SIGNALS: {
-//                        blueprint->AddSignal(tile_index, tile_diff);
-//                        FALLTHROUGH;
-//                    }
+                    case RAIL_TILE_SIGNALS: {
+                        auto maybe_add_signal = [&](
+                            byte signal_bit, uint position, Track track
+                        ) {
+                            if (!IsSignalPresent(tile_index, signal_bit))
+                                return;
+
+                            // TODO: Certain signals can exist on both sides - these are not placed properly
+                            auto item = std::make_unique<BlueprintSignalItem>(
+                                BlueprintSignalItem(
+                                    tile_index,
+                                    offset,
+                                    track,
+                                    GetSignalType(tile_index, track),
+                                    GetSignalVariant(tile_index, track),
+                                    signal_bit % 2 == 0
+                                )
+                            );
+                            items.emplace_back(std::move(item));
+                        };
+
+                        auto rails = GetTrackBits(tile_index);
+                        if (!(rails & TRACK_BIT_Y)) {
+                            if (!(rails & TRACK_BIT_X)) {
+                                if (rails & TRACK_BIT_LEFT) {
+                                    maybe_add_signal(2, 0, TRACK_LEFT);
+                                    maybe_add_signal(3, 1, TRACK_LEFT);
+                                }
+                                if (rails & TRACK_BIT_RIGHT) {
+                                    maybe_add_signal(0, 2, TRACK_RIGHT);
+                                    maybe_add_signal(1, 3, TRACK_RIGHT);
+                                }
+                                if (rails & TRACK_BIT_UPPER) {
+                                    maybe_add_signal(3, 4, TRACK_UPPER);
+                                    maybe_add_signal(2, 5, TRACK_UPPER);
+                                }
+                                if (rails & TRACK_BIT_LOWER) {
+                                    maybe_add_signal(1, 6, TRACK_LOWER);
+                                    maybe_add_signal(0, 7, TRACK_LOWER);
+                                }
+                            } else {
+                                maybe_add_signal(3, 8, TRACK_X);
+                                maybe_add_signal(2, 9, TRACK_X);
+                            }
+                        } else {
+                            maybe_add_signal(3, 10, TRACK_Y);
+                            maybe_add_signal(2, 11, TRACK_Y);
+                        }
+                        FALLTHROUGH;
+                    }
                     case RAIL_TILE_NORMAL: {
                         static const Trackdir _track_iterate_dir[TRACK_END] = {
                             TRACKDIR_X_SW,
@@ -128,7 +175,23 @@ namespace blueprint {
     }
 
     void Blueprint::Paste(TileIndex start_tile) {
+        // 2 loops - 1 for non-signals, 1 for signals
         for (auto &item: this->items) {
+            // If this item is a signal, skip on the first loop
+            if (dynamic_cast<BlueprintSignalItem *>(item.get()) != nullptr) {
+                continue;
+            }
+
+            auto command = item->MakeCommand(start_tile);
+            DoCommand(command.get(), DC_EXEC);
+        }
+
+        for (auto &item: this->items) {
+            // If this item is NOT a signal, skip on the second loop
+            if (dynamic_cast<BlueprintSignalItem *>(item.get()) == nullptr) {
+                continue;
+            }
+
             auto command = item->MakeCommand(start_tile);
             DoCommand(command.get(), DC_EXEC);
         }
