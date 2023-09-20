@@ -31,9 +31,21 @@ namespace blueprint {
         }
 
     private:
+        /**
+         * Track direction this signal was aligned to
+         */
         Track track;
+        /**
+         * Type of this signal.
+         */
         SignalType type;
+        /**
+         * Variant of this signal.
+         */
         SignalVariant variant;
+        /**
+         * Was this signal placed backwards?
+         */
         bool backward;
     };
 }
