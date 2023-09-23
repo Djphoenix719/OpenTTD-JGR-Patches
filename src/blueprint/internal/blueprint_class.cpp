@@ -18,7 +18,9 @@
 #include "blueprint/internal/item/blueprint_item_signal.hpp"
 #include "blueprint/internal/item/blueprint_item_bridge.hpp"
 #include "blueprint/internal/item/blueprint_item_tunnel.hpp"
+#include "blueprint/internal/item/blueprint_item_terrain.hpp"
 #include <algorithm>
+
 
 namespace blueprint {
     std::unique_ptr<Position> GetCursorPosition() {
@@ -157,6 +159,18 @@ namespace blueprint {
             default:
                 break;
         }
+
+        // Add terrain offsets
+        uint start_height = TileHeight(PositionToIndex(start_position));
+        uint tile_height = TileHeight(tile_index);
+
+        if (start_height != tile_height) {
+            auto item = std::make_unique<BlueprintItemTerrain>(
+                BlueprintItemTerrain(tile_index, offset, (int) tile_height - (int) start_height)
+            );
+            items.emplace_back(std::move(item));
+        }
+
         return items;
     }
 
@@ -202,10 +216,35 @@ namespace blueprint {
     }
 
     void Blueprint::Paste(TileIndex start_tile) {
-        // 2 loops - 1 for non-signals, 1 for signals
+        // Three loops - 1st for terrain, 2nd for non-signals, 3rd for signals
+        // TODO: There's a infinite loop here when the north corner of the start tile is down one
+        auto done = false;
+        while (!done) {
+            done = true;
+            for (auto &item: this->items) {
+                auto terrain_item = dynamic_cast<BlueprintItemTerrain *>(item.get());
+                if (terrain_item == nullptr) {
+                    continue;
+                }
+
+                auto command = item->MakeCommand(start_tile);
+                if (command == nullptr) {
+                    continue;
+                }
+
+                DoCommand(command.get(), DC_EXEC);
+                done = false;
+            }
+        }
+
+        // Loop 2 - non-signals
         for (auto &item: this->items) {
             // If this item is a signal, skip on the first loop
             if (dynamic_cast<BlueprintSignalItem *>(item.get()) != nullptr) {
+                continue;
+            }
+            // Skip any terrain, we're done with those
+            if (dynamic_cast<BlueprintItemTerrain *>(item.get()) != nullptr) {
                 continue;
             }
 
@@ -213,9 +252,14 @@ namespace blueprint {
             DoCommand(command.get(), DC_EXEC);
         }
 
+        // Loop 3 - signals
         for (auto &item: this->items) {
             // If this item is NOT a signal, skip on the second loop
             if (dynamic_cast<BlueprintSignalItem *>(item.get()) == nullptr) {
+                continue;
+            }
+            // Skip any terrain, we're done with those
+            if (dynamic_cast<BlueprintItemTerrain *>(item.get()) != nullptr) {
                 continue;
             }
 
